@@ -3,14 +3,51 @@ const path = require('path')
 const app = express()
 const {bots, playerRecord} = require('./data')
 const {shuffleArray} = require('./utils')
+const Rollbar = require(`rollbar`)
 
 app.use(express.json())
+
+
+const rollbar = new Rollbar({
+  accessToken: '0541a10e094d41d9bf6760766ac8a808',
+  captureUncaught: true,
+  captureUnhandledRejections: true,
+})
+
+// record a generic message and send it to Rollbar
+rollbar.log('Hello world!')
+
+// app.use(express.static(path.join(__dirname, '../public')))
+
+app.get('/', (req,res) => {
+    res.sendFile(path.join(__dirname, './public/index.html'))
+    rollbar.info('html file served successfully.')
+    rollbar.info('File served')
+})
+
+app.get('/styles', (req, res) => {
+    res.sendFile(path.join(__dirname, './public/index.css'))
+})
+
+app.get('/', (req, res) => {
+    res.sendFile(path.join(__dirname, './public/index.html'))
+})
+
+app.get(`/styles`, (req, res) => {
+    res.sendFile(path.join(__dirname, './public/index.css'))
+})
+
+app.get('/js', (req, res) => {
+    res.sendFile(path.join(__dirname, './public/index.js'))
+})
+
+
 
 app.get('/api/robots', (req, res) => {
     try {
         res.status(200).send(botsArr)
     } catch (error) {
-        console.log('ERROR GETTING BOTS', error)
+        rollbar.error('ERROR GETTING BOTS', error)
         res.sendStatus(400)
     }
 })
@@ -22,7 +59,7 @@ app.get('/api/robots/five', (req, res) => {
         let compDuo = shuffled.slice(6, 8)
         res.status(200).send({choices, compDuo})
     } catch (error) {
-        console.log('ERROR GETTING FIVE BOTS', error)
+        rollbar.error('ERROR GETTING FIVE BOTS', error)
         res.sendStatus(400)
     }
 })
@@ -53,7 +90,7 @@ app.post('/api/duel', (req, res) => {
             res.status(200).send('You won!')
         }
     } catch (error) {
-        console.log('ERROR DUELING', error)
+        roll.error('ERROR DUELING', error)
         res.sendStatus(400)
     }
 })
@@ -62,7 +99,7 @@ app.get('/api/player', (req, res) => {
     try {
         res.status(200).send(playerRecord)
     } catch (error) {
-        console.log('ERROR GETTING PLAYER STATS', error)
+        rollbar.error('ERROR GETTING PLAYER STATS', error)
         res.sendStatus(400)
     }
 })
