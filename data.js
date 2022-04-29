@@ -1,4 +1,4 @@
-const bots = [
+const botos = [
     {
         id: 0,
         name: 'The Hammer', 
