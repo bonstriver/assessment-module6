@@ -15,7 +15,7 @@ const rollbar = new Rollbar({
 })
 
 // record a generic message and send it to Rollbar
-rollbar.log(`Whats up gang it works again`)
+rollbar.log(`Hello team!`)
 
 // app.use(express.static(path.join(__dirname, '../public')))
 
